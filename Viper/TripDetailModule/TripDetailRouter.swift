@@ -26,30 +26,21 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Combine
-import MapKit
+import SwiftUI
 
-class TripDetailInteractor {
-    private let trip: Trip
-    private let model: DataModel
-    let mapInfoProvider: MapDataProvider
+class TripDetailRouter {
+    private let mapProvider: MapDataProvider
     
-    var tripName: String { trip.name }
-    var tripNamePublisher: Published<String>.Publisher { trip.$name }
-    
-    private let cancellable = Set<AnyCancellable>()
-    
-    init(trip: Trip, model: DataModel, mapInfoProvider: MapDataProvider) {
-        self.trip = trip
-        self.mapInfoProvider = mapInfoProvider
-        self.model = model
+    init(mapProvider: MapDataProvider) {
+        self.mapProvider = mapProvider
     }
     
-    func setTripName(_ name: String) {
-        trip.name = name
-    }
-    
-    func save() {
-        model.save()
+    func makeWaypointView(for waypoint: Waypoint) -> some View {
+        let presenter = WaypointViewPresenter(
+            waypoint: waypoint,
+            interactor: WaypointViewInteractor(
+                waypoint: waypoint,
+                mapInfoProvider: mapProvider))
+        return WaypointView(presenter: presenter)
     }
 }

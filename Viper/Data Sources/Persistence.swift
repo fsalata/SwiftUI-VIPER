@@ -40,11 +40,11 @@ class Persistence {
     print("In case you need to delete the database: \(fileURL)")
     return fileURL
   }
-  
+
   var defaultFile: URL {
     return Bundle.main.url(forResource: "default", withExtension: "json")!
   }
-
+  
   private func clear() {
     try? FileManager.default.removeItem(at: localFile)
   }

@@ -26,53 +26,33 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Foundation
-import Combine
+import SwiftUI
 
-final class Trip {
-  @Published var name: String = ""
-  @Published var waypoints: [Waypoint] = []
-  let id: UUID
-
-  init() {
-    id = UUID()
-  }
-
-  required init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    name = try container.decode(String.self, forKey: .name)
-    waypoints = try container.decode([Waypoint].self, forKey: .waypoints)
-    id = try container.decode(UUID.self, forKey: .id)
-  }
-
-  func addWaypoint() {
-    let waypoint = waypoints.last?.copy() ?? Waypoint()
-    waypoint.name = "New Stop"
-    waypoints.append(waypoint)
-  }
+struct TripListView: View {
+    @ObservedObject var presenter: TripListPresenter
+    
+    var body: some View {
+        List {
+            ForEach (presenter.trips, id: \.id) { item in
+                self.presenter.linkBuilder(for: item) {
+                    TripListCell(trip: item)
+                        .frame(height: 240)
+                }
+            }
+            .onDelete(perform: presenter.deleteTrip)
+        }
+        .navigationBarTitle("Roadtrips", displayMode: .inline)
+        .navigationBarItems(trailing: presenter.makeAddNewButton())
+    }
 }
 
-extension Trip: Codable {
-  enum CodingKeys: CodingKey {
-    case name
-    case waypoints
-    case id
-  }
-
-  func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(name, forKey: .name)
-    try container.encode(waypoints, forKey: .waypoints)
-    try container.encode(id, forKey: .id)
-  }
+struct TripListView_Previews: PreviewProvider {
+    static var previews: some View {
+        let model = DataModel.sample
+        let interactor = TripListInteractor(model: model)
+        let presenter = TripListPresenter(interactor: interactor)
+        return NavigationView {
+            TripListView(presenter: presenter)
+        }
+    }
 }
-
-extension Trip: Equatable {
-  static func == (lhs: Trip, rhs: Trip) -> Bool {
-    lhs.id == rhs.id
-  }
-}
-
-extension Trip: Identifiable {}
-
-extension Trip: ObservableObject {}

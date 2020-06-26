@@ -26,20 +26,32 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Foundation
+import MapKit
+import Combine
 
-class TripListInteractor {
-    let model: DataModel
+class TripMapViewPresenter: ObservableObject {
+    @Published var pins: [MKAnnotation] = []
+    @Published var routes: [MKRoute] = []
     
-    init(model: DataModel) {
-        self.model = model
-    }
+    let interactor: TripDetailInteractor
+    private var cancellables = Set<AnyCancellable>()
     
-    func addNewTrip() {
-        model.pushNewTrip()
-    }
-    
-    func deleteTrip(_ index: IndexSet) {
-        model.trips.remove(atOffsets: index)
+    init(interactor: TripDetailInteractor) {
+        self.interactor = interactor
+        
+        interactor.$waypoints
+            .map {
+                $0.map {
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = $0.location
+                    return annotation
+                }
+        }
+        .assign(to: \.pins, on: self)
+        .store(in: &cancellables)
+        
+        interactor.$directions
+            .assign(to: \.routes, on: self)
+            .store(in: &cancellables)
     }
 }

@@ -29,7 +29,7 @@
 import Combine
 
 final class DataModel {
-  private let persistence: Persistence = Persistence()
+  private let persistence = Persistence()
 
   @Published var trips: [Trip] = []
 

@@ -23,7 +23,7 @@
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 /// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTaHER DEALINGS IN
 /// THE SOFTWARE.
 
 import SwiftUI
@@ -33,7 +33,9 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            TripListView(presenter: TripListPresenter(interactor: TripListInteractor(model: model)))
+            TripListView(presenter:
+                TripListPresenter(interactor:
+                    TripListInteractor(model: model)))
         }
     }
 }

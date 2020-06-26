@@ -91,7 +91,7 @@ extension Waypoint {
 
 extension CLLocationCoordinate2D: Codable {
   public init(from decoder: Decoder) throws {
-    let representation = try decoder.singleValueContainer().decode([String:CLLocationDegrees].self)
+    let representation = try decoder.singleValueContainer().decode([String: CLLocationDegrees].self)
     self.init(latitude: representation["latitude"] ?? 0, longitude:  representation["longitude"] ?? 0)
   }
 
